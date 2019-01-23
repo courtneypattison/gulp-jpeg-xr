@@ -12,7 +12,6 @@ $ npm install --save-dev gulp-jpeg-xr
 ```
 $ mv ~/Downloads/NConvert/nconvert /usr/local/bin/
 ```
-This plugin has only been tested on macOS but should work on linux
 
 ## Usage
 ```
