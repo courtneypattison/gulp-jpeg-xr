@@ -7,6 +7,7 @@ const jxr = require('../index');
 const pj = require('path').join;
 const sinon = require('sinon');
 const Stream = require('readable-stream');
+const tmp = require('tmp');
 const Vinyl = require('vinyl');
 const vinylFile = require('vinyl-file');
 
@@ -82,7 +83,7 @@ describe(PLUGIN_NAME, () => {
 
     stream.write(vinyl);
     stream.once('error', (error) => {
-      expect(error.message).to.contain(filename);
+      expect(error);
       done();
     });
   });
@@ -181,6 +182,40 @@ describe(PLUGIN_NAME, () => {
       stream.write(vinyl);
     } catch (error) {
       expect(error.message.toLowerCase()).to.contain('stream');
+      done();
+    }
+  });
+
+  it('error with error message when tmp errors', (done) => {
+    sinon.stub(tmp, 'tmpNameSync').throws(new Error("tmp errored"));
+    const stream = jxr();
+    const vinyl = new Vinyl({
+      path: 'cat.txt',
+      contents: Buffer.from('cat')
+    });
+
+    try {
+      stream.write(vinyl);
+    } catch (error) {
+      tmp.tmpNameSync.restore();
+      expect(error);
+      done();
+    }
+  });
+
+  it('error with custom message when tmp errors', (done) => {
+    sinon.stub(tmp, 'tmpNameSync').throws('error');
+    const stream = jxr();
+    const vinyl = new Vinyl({
+      path: 'cat.txt',
+      contents: Buffer.from('cat')
+    });
+
+    try {
+      stream.write(vinyl);
+    } catch (error) {
+      tmp.tmpNameSync.restore();
+      expect(error.message).to.contain('tmp');
       done();
     }
   });

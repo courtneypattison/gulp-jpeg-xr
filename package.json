@@ -1,11 +1,15 @@
 {
   "name": "gulp-jpeg-xr",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A gulp plugin for converting images to JPEG XR (JXR) using nConvert",
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly test/test.js && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
+    "coverage:lcov": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly test/test.js",
+    "coverage:html": "istanbul cover ./node_modules/mocha/bin/_mocha --report html test/test.js",
+    "coverage:rm": "rm -rf ./coverage",
+    "coverage:pipe": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "coverage:write": "npm run coverage:lcov && npm run coverage:pipe && npm run coverage:rm"
   },
   "repository": {
     "type": "git",
@@ -15,7 +19,9 @@
     "gulpplugin",
     "jxr",
     "jpeg-xr",
-    "image"
+    "image",
+    "next-gen",
+    "jpeg"
   ],
   "author": "Courtney Pattison <courtney@courtneypattison.com> (https://courtneypattison.com/)",
   "license": "MIT",
@@ -28,17 +34,17 @@
     "plugin-error": "^1.0.1",
     "readable-stream": "^3.1.1",
     "replace-ext": "^1.0.0",
-    "through2": "^3.0.0",
-    "tmp": "0.0.33"
+    "through2": "^3.0.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "coveralls": "^3.0.2",
-    "file-type": "^10.7.0",
+    "file-type": "^10.7.1",
     "istanbul": "^0.4.5",
     "mocha": "^5.2.0",
     "path": "^0.12.7",
     "sinon": "^7.2.2",
+    "tmp": "0.0.33",
     "vinyl": "^2.2.0",
     "vinyl-file": "^3.0.0"
   },

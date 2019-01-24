@@ -17,53 +17,63 @@ function gulpJxrConverter() {
       return cb(new PluginError(PLUGIN_NAME, 'Streams are not supported!', { showProperties: false }));
     }
 
-    const tmpFilepath = tmp.tmpNameSync({ postfix: '.jxr' });
-    const nconvert = cp.spawn('nconvert', ['-out', 'jxr', '-overwrite', '-o', tmpFilepath, '-quiet', file.path]);
-    let nconvertError = 'nConvert errored.';
+    try {
+      // nConvert doesn't work realiably with streams, so use temporary files for input and output
+      const tmpInFilePath = tmp.tmpNameSync({ postfix: file.extname });
+      const tmpOutFilePath = tmp.tmpNameSync({ postfix: '.jxr' });
 
-    nconvert.stderr.on('data', (data) => {
-      nconvertError = data.toString();
-    });
+      fs.writeFileSync(tmpInFilePath, file.contents);
+      
+      const nconvert = cp.spawn('nconvert', ['-out', 'jxr', '-overwrite', '-o', tmpOutFilePath, '-quiet', tmpInFilePath]);
+      let nconvertError = 'nConvert error.';
 
-    nconvert.on('error', (error) => {
-      return cb(new PluginError(PLUGIN_NAME, 'nConvert is not installed! Installation instructions: https://github.com/courtneypattison/gulp-jpeg-xr', { showProperties: false }));
-    });
+      nconvert.stderr.on('data', (data) => {
+        nconvertError = data.toString();
+      });
 
-    nconvert.on('close', (code) => {
-      if (code === 0) {
-        let buffers = [];
-        let catError = 'cat errored.';
-        const cat = cp.spawn('cat', [tmpFilepath]);
+      nconvert.on('error', (error) => {
+        return cb(new PluginError(PLUGIN_NAME, 'nConvert is not installed! Installation instructions: https://github.com/courtneypattison/gulp-jpeg-xr', { showProperties: false }));
+      });
 
-        cat.stdout.on('data', (data) => {
-          buffers.push(data);
-        });
+      nconvert.on('close', (code) => {
+        fs.unlinkSync(tmpInFilePath);
+        if (code === 0) {
+          let buffers = [];
+          let catError = 'cat errored.';
+          const cat = cp.spawn('cat', [tmpOutFilePath]);
 
-        cat.stderr.on('data', (error) => {
-          catError = error.toString();
-        });
+          cat.stdout.on('data', (data) => {
+            buffers.push(data);
+          });
 
-        cat.on('error', (error) => {
-          catError = error.toString();
-        });
+          cat.stderr.on('data', (error) => {
+            catError = error.toString();
+          });
 
-        cat.on('close', (code) => {
-          if (code === 0) {
-            file.contents = Buffer.concat(buffers);
-            file.path = replaceExt(file.path, '.jxr');
-            if (file.contents.length === 0) {
-              return cb(new PluginError(PLUGIN_NAME, 'Empty buffer.', { showProperties: false }));
+          cat.on('error', (error) => {
+            catError = error.toString();
+          });
+
+          cat.on('close', (code) => {
+            if (code === 0) {
+              file.contents = Buffer.concat(buffers);
+              file.path = replaceExt(file.path, '.jxr');
+              if (file.contents.length === 0) {
+                return cb(new PluginError(PLUGIN_NAME, 'Empty buffer.', { showProperties: false }));
+              }
+              fs.unlinkSync(tmpOutFilePath);
+              cb(null, file);
+            } else {
+              cb(new PluginError(PLUGIN_NAME, catError, { showProperties: false }));
             }
-            fs.unlinkSync(tmpFilepath);
-            cb(null, file);
-          } else {
-            cb(new PluginError(PLUGIN_NAME, catError, { showProperties: false }));
-          }
-        });
-      } else {
-        cb(new PluginError(PLUGIN_NAME, nconvertError, { showProperties: false }));
-      }
-    });
+          });
+        } else {
+          cb(new PluginError(PLUGIN_NAME, nconvertError, { showProperties: false }));
+        }
+      });
+    } catch (error) {
+      return cb(new PluginError(PLUGIN_NAME, error.message ? error.message : 'Failed to write/read tmp files.', { showProperties: false }));
+    }
   });
 }
 
