@@ -19,7 +19,7 @@ $ mv ~/Downloads/NConvert/nconvert /usr/local/bin/
 ```
 
 ## Usage
-```.js
+```js
 var gulp = require('gulp');
 var jxr = require('gulp-jpeg-xr');
 
