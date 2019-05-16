@@ -1,9 +1,10 @@
 const cp = require('child_process');
 const fs = require('fs');
-const through = require('through2');
-const tmp = require('tmp');
+const os = require('os');
 const PluginError = require('plugin-error');
 const replaceExt = require('replace-ext');
+const through = require('through2');
+const tmp = require('tmp');
 
 const PLUGIN_NAME = 'gulp-jpeg-xr';
 
@@ -39,22 +40,23 @@ function gulpJxrConverter() {
         fs.unlinkSync(tmpInFilePath);
         if (code === 0) {
           let buffers = [];
-          let catError = 'cat errored.';
-          const cat = cp.spawn('cat', [tmpOutFilePath]);
+          let outputProcessError = 'outputProcess errored.';
+          const outputProcessName = os.platform() === 'win32' ? 'type' : 'cat';
+          const outputProcess = cp.spawn(outputProcessName, [tmpOutFilePath]);
 
-          cat.stdout.on('data', (data) => {
+          outputProcess.stdout.on('data', (data) => {
             buffers.push(data);
           });
 
-          cat.stderr.on('data', (error) => {
-            catError = error.toString();
+          outputProcess.stderr.on('data', (error) => {
+            outputProcessError = error.toString();
           });
 
-          cat.on('error', (error) => {
-            catError = error.toString();
+          outputProcess.on('error', (error) => {
+            outputProcessError = error.toString();
           });
 
-          cat.on('close', (code) => {
+          outputProcess.on('close', (code) => {
             if (code === 0) {
               file.contents = Buffer.concat(buffers);
               file.path = replaceExt(file.path, '.jxr');
@@ -64,7 +66,7 @@ function gulpJxrConverter() {
               fs.unlinkSync(tmpOutFilePath);
               cb(null, file);
             } else {
-              cb(new PluginError(PLUGIN_NAME, catError, { showProperties: false }));
+              cb(new PluginError(PLUGIN_NAME, outputProcessError, { showProperties: false }));
             }
           });
         } else {
