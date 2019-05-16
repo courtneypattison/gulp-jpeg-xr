@@ -1,10 +1,15 @@
-# [gulp](https://gulpjs.com/)-jpeg-xr [![Coverage Status](https://coveralls.io/repos/github/courtneypattison/gulp-jpeg-xr/badge.svg?branch=master)](https://coveralls.io/github/courtneypattison/gulp-jpeg-xr?branch=master)
+[![Coverage Status][coveralls-img]][coveralls-url] [![NPM Version][npm-img]][npm-url]
+
+# [gulp](https://gulpjs.com/)-jpeg-xr
 > A gulp plugin for converting images to JPEG XR (JXR) using [nConvert](https://www.xnview.com/en/nconvert/)
 
 ## Installation
-Install with npm:
+Install with [yarn][yarn-url] or [npm][npm-home-url]:
 ```
-$ npm install --save-dev gulp-jpeg-xr
+$ yarn add gulp-jpeg-xr -D
+```
+```
+$ npm i gulp-jpeg-xr -D
 ```
 
 ### nConvert
@@ -14,7 +19,7 @@ $ mv ~/Downloads/NConvert/nconvert /usr/local/bin/
 ```
 
 ## Usage
-```
+```.js
 var gulp = require('gulp');
 var jxr = require('gulp-jpeg-xr');
 
@@ -28,3 +33,12 @@ function convertJXR() {
 ## License
 
 MIT © [Courtney Pattison](https://courtneypattison.com/)
+
+[coveralls-img]: https://img.shields.io/coveralls/github/courtneypattison/gulp-jpeg-xr.svg
+[coveralls-url]: https://coveralls.io/github/courtneypattison/gulp-jpeg-xr
+
+[npm-home-url]: https://www.npmjs.com/
+[npm-img]: https://img.shields.io/npm/v/gulp-jpeg-xr.svg
+[npm-url]: https://www.npmjs.com/package/gulp-jpeg-xr
+
+[yarn-url]: https://yarnpkg.com/
