@@ -1,0 +1,15 @@
+language: node_js
+
+node_js: node
+
+os: linux
+
+before_install:
+  - yarn global add gulp
+  - wget http://download.xnview.com/NConvert-linux64.tgz
+  - tar xzf NConvert-linux64.tgz
+  - export PATH=$PATH:$PWD/NConvert
+
+script: yarn cover:lcov
+
+after_script: yarn cover:write
