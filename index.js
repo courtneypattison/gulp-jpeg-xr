@@ -42,7 +42,7 @@ function gulpJxrConverter() {
           let buffers = [];
           let outputProcessError = 'outputProcess errored.';
           const outputProcessName = os.platform() === 'win32' ? 'type' : 'cat';
-          const outputProcess = cp.spawn(outputProcessName, [tmpOutFilePath]);
+          const outputProcess = cp.spawn(outputProcessName, [tmpOutFilePath], { shell: true });
 
           outputProcess.stdout.on('data', (data) => {
             buffers.push(data);
