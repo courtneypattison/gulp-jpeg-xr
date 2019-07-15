@@ -3,6 +3,9 @@
   "version": "1.0.3",
   "description": "A gulp plugin for converting images to JPEG XR (JXR) using nConvert",
   "main": "index.js",
+  "files": [
+    "index.js"
+  ],
   "scripts": {
     "test": "mocha",
     "coverage:lcov": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly test/test.js",
