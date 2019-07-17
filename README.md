@@ -1,4 +1,4 @@
-[![Coverage Status][coveralls-img]][coveralls-url] [![NPM Version][npm-img]][npm-url]
+[![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]][coveralls-url] [![NPM Version][npm-img]][npm-url]
 
 # [gulp](https://gulpjs.com/)-jpeg-xr
 > A gulp plugin for converting images to JPEG XR (JXR) using [nConvert](https://www.xnview.com/en/nconvert/)
@@ -40,5 +40,8 @@ MIT © [Courtney Pattison](https://courtneypattison.com/)
 [npm-home-url]: https://www.npmjs.com/
 [npm-img]: https://img.shields.io/npm/v/gulp-jpeg-xr.svg
 [npm-url]: https://www.npmjs.com/package/gulp-jpeg-xr
+
+[travis-img]: https://img.shields.io/travis/courtneypattison/gulp-jpeg-xr.svg
+[travis-url]: https://travis-ci.org/courtneypattison/gulp-jpeg-xr
 
 [yarn-url]: https://yarnpkg.com/
