@@ -8,7 +8,7 @@ const tmp = require('tmp');
 
 const PLUGIN_NAME = 'gulp-jpeg-xr';
 
-function gulpJxrConverter() {
+function gulpJxrConverter(options) {
   return through.obj(function (file, enc, cb) {
     if (file.isNull()) {
       return cb(null, file);
@@ -24,8 +24,12 @@ function gulpJxrConverter() {
       const tmpOutFilePath = tmp.tmpNameSync({ postfix: '.jxr' });
 
       fs.writeFileSync(tmpInFilePath, file.contents);
-      
-      const nconvert = cp.spawn('nconvert', ['-out', 'jxr', '-overwrite', '-o', tmpOutFilePath, '-quiet', tmpInFilePath]);
+    
+      let args = ['-out', 'jxr', '-overwrite', '-o', tmpOutFilePath, '-quiet', tmpInFilePath];
+      if (options) {
+        args = options.concat(args);
+      }
+      const nconvert = cp.spawn('nconvert', args);
       let nconvertError = 'nConvert error.';
 
       nconvert.stderr.on('data', (data) => {
@@ -38,7 +42,9 @@ function gulpJxrConverter() {
 
       nconvert.on('close', (code) => {
         fs.unlinkSync(tmpInFilePath);
-        if (code === 0) {
+        if (code) {
+          return cb(new PluginError(PLUGIN_NAME, nconvertError, { showProperties: false }));
+        } else {
           let buffers = [];
           let outputProcessError = 'outputProcess errored.';
           const outputProcessName = os.platform() === 'win32' ? 'type' : 'cat';
@@ -64,13 +70,11 @@ function gulpJxrConverter() {
                 return cb(new PluginError(PLUGIN_NAME, 'Empty buffer.', { showProperties: false }));
               }
               fs.unlinkSync(tmpOutFilePath);
-              cb(null, file);
+              return cb(null, file);
             } else {
-              cb(new PluginError(PLUGIN_NAME, outputProcessError, { showProperties: false }));
+              return cb(new PluginError(PLUGIN_NAME, outputProcessError, { showProperties: false }));
             }
           });
-        } else {
-          cb(new PluginError(PLUGIN_NAME, nconvertError, { showProperties: false }));
         }
       });
     } catch (error) {
