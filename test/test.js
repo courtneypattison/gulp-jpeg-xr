@@ -49,6 +49,18 @@ describe(PLUGIN_NAME, () => {
     });
   });
 
+  it('convert png to jxr when passed options', (done) => {
+    const stream = jxr(['-truecolours']);
+    const vinyl = vinylFile.readSync(pj(__dirname, 'fixtures/cat.png'));
+
+    stream.write(vinyl);
+    stream.once('data', (file) => {
+      expect(fileType(file.contents).mime).to.equal('image/vnd.ms-photo');
+      expect(fileType(file.contents).ext).to.equal('jxr');
+      done();
+    });
+  });
+
   it('convert tif to jxr when valid file contents', (done) => {
     const stream = jxr();
     const vinyl = vinylFile.readSync(pj(__dirname, 'fixtures/cat.tif'));
@@ -91,6 +103,17 @@ describe(PLUGIN_NAME, () => {
   it('error when corrupt image', (done) => {
     const stream = jxr();
     const vinyl = vinylFile.readSync(pj(__dirname, 'fixtures/corruptcat.jpg'));
+
+    stream.write(vinyl);
+    stream.once('error', (error) => {
+      expect(error);
+      done();
+    });
+  });
+
+  it('error when corrupt image', (done) => {
+    const stream = jxr(['-invalidoption']);
+    const vinyl = vinylFile.readSync(pj(__dirname, 'fixtures/cat.jpg'));
 
     stream.write(vinyl);
     stream.once('error', (error) => {
