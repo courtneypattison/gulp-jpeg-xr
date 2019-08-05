@@ -1,6 +1,6 @@
 {
   "name": "gulp-jpeg-xr",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "A gulp plugin for converting images to JPEG XR (JXR) using nConvert",
   "main": "index.js",
   "files": [
