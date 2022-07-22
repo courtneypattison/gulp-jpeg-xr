@@ -42,7 +42,7 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "coveralls": "^3.0.2",
-    "file-type": "^12.1.0",
+    "file-type": "^16.5.4",
     "mocha": "^6.2.0",
     "nyc": "^14.1.1",
     "path": "^0.12.7",
